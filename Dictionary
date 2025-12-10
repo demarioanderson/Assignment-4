@@ -1,0 +1,111 @@
+// Dictionary.java
+public class Dictionary {
+    private DictionaryNode root;
+
+    public Dictionary() {
+        root = null;
+    }
+
+    // Part I: insertWordNode
+    public void insertWordNode(String word) {
+        if (word == null) return;
+        root = insertRec(root, word.toLowerCase());
+    }
+
+    private DictionaryNode insertRec(DictionaryNode node, String word) {
+        if (node == null) {
+            return new DictionaryNode(word);
+        }
+
+        int cmp = word.compareTo(node.word);
+        if (cmp < 0) {
+            node.left = insertRec(node.left, word);
+        } else if (cmp > 0) {
+            node.right = insertRec(node.right, word);
+        } else {
+            // word already exists: do nothing
+        }
+        return node;
+    }
+
+    // Spell checker: true if word is in BST
+    public boolean spellCheck(String word) {
+        if (word == null) return false;
+        return searchRec(root, word.toLowerCase()) != null;
+    }
+
+    // Helper: search for node
+    private DictionaryNode searchRec(DictionaryNode node, String word) {
+        if (node == null) return null;
+        int cmp = word.compareTo(node.word);
+        if (cmp == 0) return node;
+        if (cmp < 0) return searchRec(node.left, word);
+        return searchRec(node.right, word);
+    }
+
+    // checkWord: remove a word from BST
+    public void checkWord(String word) {
+        if (word == null) return;
+        root = deleteRec(root, word.toLowerCase());
+    }
+
+    private DictionaryNode deleteRec(DictionaryNode node, String word) {
+        if (node == null) return null;
+
+        int cmp = word.compareTo(node.word);
+        if (cmp < 0) {
+            node.left = deleteRec(node.left, word);
+        } else if (cmp > 0) {
+            node.right = deleteRec(node.right, word);
+        } else {
+            // node to delete found
+            // case (b): no children
+            if (node.left == null && node.right == null) {
+                return null;
+            }
+            // case (c): one child
+            if (node.left == null) return node.right;
+            if (node.right == null) return node.left;
+
+            // case (d): two children
+            DictionaryNode successor = minNode(node.right);
+            node.word = successor.word;
+            node.right = deleteRec(node.right, successor.word);
+        }
+        return node;
+    }
+
+    private DictionaryNode minNode(DictionaryNode node) {
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
+    }
+
+    // Helper for tests: validate BST properties and no cycles
+    public void validateBST() {
+        validateBSTRec(root, null, null);
+    }
+
+    private void validateBSTRec(DictionaryNode node, String min, String max) {
+        if (node == null) return;
+
+        if (min != null) {
+            assert node.word.compareTo(min) > 0 : "Node word not greater than min bound";
+        }
+        if (max != null) {
+            assert node.word.compareTo(max) < 0 : "Node word not less than max bound";
+        }
+
+        // child ordering: left < node < right
+        if (node.left != null) {
+            assert node.left.word.compareTo(node.word) < 0 : "Left child not smaller than parent";
+        }
+        if (node.right != null) {
+            assert node.right.word.compareTo(node.word) > 0 : "Right child not greater than parent";
+        }
+
+        validateBSTRec(node.left, min, node.word);
+        validateBSTRec(node.right, node.word, max);
+    }
+}
