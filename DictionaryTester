@@ -1,0 +1,43 @@
+// DictionaryTester.java
+public class DictionaryTester {
+    public static void main(String[] args) {
+        Dictionary dict = new Dictionary();
+
+        // Insert a few words
+        dict.insertWordNode("here");
+        dict.insertWordNode("is");
+        dict.insertWordNode("the");
+        dict.insertWordNode("perfect");
+        dict.insertWordNode("system");
+        dict.insertWordNode("for");
+        dict.insertWordNode("cleaning");
+        dict.insertWordNode("your");
+        dict.insertWordNode("room");
+
+        // After each batch of operations, validate structure
+        dict.validateBST();
+
+        // Spell check tests
+        assert dict.spellCheck("here");
+        assert dict.spellCheck("room");
+        assert !dict.spellCheck("banana");
+
+        // Deletion tests: leaf, one child, two children
+        dict.checkWord("room");   // delete a leaf (likely)
+        dict.validateBST();
+        assert !dict.spellCheck("room");
+
+        dict.checkWord("here");   // delete another node
+        dict.validateBST();
+        assert !dict.spellCheck("here");
+
+        // Insert again and recheck
+        dict.insertWordNode("room");
+        dict.insertWordNode("here");
+        dict.validateBST();
+        assert dict.spellCheck("room");
+        assert dict.spellCheck("here");
+
+        System.out.println("Successful");
+    }
+}
