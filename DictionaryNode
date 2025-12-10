@@ -1,0 +1,12 @@
+// DictionaryNode.java
+public class DictionaryNode {
+    String word;
+    DictionaryNode left;
+    DictionaryNode right;
+
+    public DictionaryNode(String word) {
+        this.word = word;
+        this.left = null;
+        this.right = null;
+    }
+}
